@@ -4,6 +4,7 @@ Created on Sun Jul 15 15:38:42 2018
 
 @author: GEAR
 """
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.font_manager import FontProperties
@@ -100,6 +101,14 @@ def lwlr(testpoint, xMat, yMat, k=1.0):
 
 
 def lwlrTest(testMat, xMat, yMat, k=1.0):
+    '''
+    函数说明：计算预测值
+    :param testMat: 测试集
+    :param xMat:    训练集
+    :param yMat:    训练集
+    :param k:
+    :return:
+    '''
     rows = np.shape(testMat)[0]
     yHat = np.zeros((rows, 1))
     for i in range(rows):
@@ -120,28 +129,22 @@ def showlwlrRegression(xMat, yMat):
 
 
 def lossError(yMat, yHat):
-    '''
-    函数说明：计算预测结果和实际结果的误差
-    :param yMat:
-    :param yHat:
-    :return:
-    '''
     totalLoss = ((yMat.A - yHat) ** 2).sum()
     print('totalLoss:', totalLoss)
     return totalLoss
 
-
 if __name__ == '__main__':
     # 数据集所在地址：
-    path = 'D:/python/machine_learning_algorithm/Regression/DateSet/regression.txt'
+    path = 'D:/python/machine_learning_algorithm/Regression/DateSet/abalone.txt'
     data = loadDataSet(path)
-    xMat = np.mat(data[:, 0:2])  # 特征列
-    yMat = np.mat(data[:, 2]).T  # 标签列，注意这里array转matrix时列向量会变行向量，一定要注意
-    showDataSet(data)
-    showRegression(xMat, yMat)
-    cacuCorrcoef(xMat, yMat)
-    showlwlrRegression(xMat, yMat)
-    yHat = lwlrTest(xMat, xMat, yMat, 0.03)
-    lossError(yMat, yHat)
+    xMat = np.mat(data[:, 0:-1])  # 特征列
+    yMat = np.mat(data[:, -1]).T  # 标签列，注意这里array转matrix时列向量会变行向量，一定要注意
+    yHat = lwlrTest(xMat[200:400], xMat[0:150], yMat[0:150], 10)
+    lossError(yMat[200:400], yHat)
 
+    ws = standRegression(xMat[0:200], yMat[0:200])
+    yHat = (xMat[200:400] * ws).A
+    plt.plot(yHat)
+    plt.plot(yMat[200:400])
+    plt.legend(['yhat', 'ymat'])
 
