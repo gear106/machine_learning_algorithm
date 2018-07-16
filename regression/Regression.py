@@ -62,7 +62,7 @@ def standRegression(xMat, yMat):
 def showRegression(xMat, yMat):
     ws = standRegression(xMat, yMat)
     xHat = xMat.copy()
-    xHat.sort(axis=0)
+    xHat.sort(axis=0)   # axis=0按列排序，改变原来的数据位置
     yHat = xHat * ws
     plt.figure(2)
     plt.plot(xHat[:,1], yHat, c='red')
@@ -75,10 +75,10 @@ def showRegression(xMat, yMat):
 
 if __name__ == '__main__':
     # 数据集所在地址：
-    path = 'D:/python/mechine_learning_algorithm/Regresssion/DateSet/regression.txt'
+    path = 'D:/python/machine_learning_algorithm/Regression/DateSet/regression.txt'
     data = loadDataSet(path)
-    xMat = np.mat(data[:,0:2])  # 特征列
-    yMat = np.mat(data[:,2]).T    # 标签列
+    xMat = np.mat(data[:,0:2])    # 特征列
+    yMat = np.mat(data[:,2]).T    # 标签列，注意这里array转matrix时列向量会变行向量，一定要注意
     showDataSet(data)
     showRegression(xMat, yMat)
 
