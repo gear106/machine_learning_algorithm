@@ -92,8 +92,8 @@ def lossError(yMat, yHat):
     :param yHat: 预测值
     :return:
     '''
-    totalLoss = ((yMat.A - yHat) ** 2).sum()
-    print('totalLoss:', totalLoss)
+    totalLoss = ((yMat.A - yHat.A) ** 2).sum()
+    return totalLoss
 
 def stageWise(xMat, yMat, eps=0.01, index = 100):
     rxMat, ryMat = regularize(xMat, yMat)   #数据归一化
@@ -101,8 +101,22 @@ def stageWise(xMat, yMat, eps=0.01, index = 100):
     wsMat = np.zeros((index, cols))         # 初始化回归系数矩阵
     ws = np.zeros((cols, 1))                # 初始化回归系数
     wsTest = ws.copy()
-    wsMax = ws.copy
+    wsMax = ws.copy()
+    lowestError = float('inf')  # 正无穷
+    for i in range(index): #迭代次数
+        for j in range(cols):
+            for sign in [-1, 1]:
+                wsTest = ws.copy()
+                wsTest[j] += eps * sign     # 微调回归系数
+                yTest = rxMat * wsTest      # 计算预测值
+                error = lossError(ryMat, yTest)
+                if error < lowestError:
+                    lowestError = error
+                    wsMax = wsTest
+        ws = wsMax.copy()
+        wsMat[i,:] = ws.T
 
+    return wsMat
 
 def show_wsMat():
     font = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=14)
@@ -124,5 +138,26 @@ def show_wsMat():
     plt.show()
 
 
+def showstageWiseMat():
+    font = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=14)
+    # 数据集所在地址：
+    path = 'D:/python/machine_learning_algorithm/Regression/DateSet/abalone.txt'
+    data = loadDataSet(path)
+    xMat = np.mat(data[:, 0:-1])  # 特征列
+    yMat = np.mat(data[:, -1]).T  # 标签列，注意这里array转matrix时列向量会变行向量，一定要注意
+    returnMat = stageWise(xMat, yMat, 0.005, 1000)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(returnMat)
+    title = ax.set_title(u'前向逐步回归', FontProperties = font)
+    xlabel = ax.set_xlabel(u'迭代次数', FontProperties = font)
+    ylabel = ax.set_ylabel(u'回归系数', FontProperties = font)
+    plt.setp(title, size = 15, weight = 'bold', color = 'red')
+    plt.setp(xlabel, size = 10, weight = 'bold', color = 'black')
+    plt.setp(ylabel, size = 10, weight = 'bold', color = 'black')
+    plt.show()
+
+
 if __name__ == '__main__':
     show_wsMat()
+    showstageWiseMat()
