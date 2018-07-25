@@ -149,6 +149,24 @@ def classify(inputTree, featLabels, testVec):
                 classLabel = secondDict[key]
     return classLabel
 
+def storeTree(inputTree, filename):
+    '''
+    函数说明：存储决策树
+    :param inputTree: 已经生成的决策树
+    :param filename: 决策树的存储文件名
+    :return:
+    '''
+    with open(filename, 'wb') as fw:
+        pickle.dump(inputTree, fw)
+
+def grabTree(filename):
+    '''
+    函数说明：读取存储的决策树
+    :param filename:决策树存储文件名
+    :return:        决策树字典
+    '''
+    fr = open(filename, 'rb')
+    return pickle.load(fr)
 
 if __name__ == '__main__':
     dataSet, labels = creatDataSet()
@@ -158,6 +176,7 @@ if __name__ == '__main__':
     print('最优特征索引：' + str(chooseBestFeatureToSplit(dataSet)))
     featLabels = []
     myTree = creatTree(dataSet, labels, featLabels)
+    storeTree(myTree, 'classifierStorage.txt')
     print(myTree)
     testVec = [0,1] #表示没房子有工作
     result = classify(myTree, featLabels, testVec)
